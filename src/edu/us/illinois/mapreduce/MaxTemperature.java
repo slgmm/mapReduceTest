@@ -1,4 +1,5 @@
 package edu.us.illinois.mapreduce;
+import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
@@ -62,6 +63,10 @@ public class MaxTemperature {
 	
       if(args.length < 2 ){
     	  System.out.println("Please run command with input & output file name");
+      }else if (args[0] != null && !new File(args[0]).exists()){
+    	  System.out.println("Input file '" + args[0] + " not exists");
+      }else if (args[1] != null && new File(args[1]).exists()){
+    	  System.out.println("Output file '" + args[1] + "' already exists, please rename/delete it");
       }
       FileInputFormat.addInputPath(job, new Path(args[0]));
       FileOutputFormat.setOutputPath(job, new Path(args[1]));
