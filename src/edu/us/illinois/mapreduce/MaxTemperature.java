@@ -4,10 +4,8 @@ import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
-
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -49,11 +47,10 @@ public class MaxTemperature {
       }
    }
 
- 
    public static void main(String[] args) throws Exception 
    {
       Configuration conf = new Configuration();
-      Job job = Job.getInstance(conf, "word count");
+      Job job = Job.getInstance(conf, "MaxTemperature");
 		
       job.setJarByClass(MaxTemperature.class);
       job.setMapperClass(MaxTemperatureMapper.class);
