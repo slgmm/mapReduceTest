@@ -58,7 +58,10 @@ public class MaxTemperature {
 		
       job.setOutputKeyClass(Text.class);
       job.setOutputValueClass(IntWritable.class);
-		
+	
+      if(args.length < 2 ){
+    	  System.out.println("Please run command with input & output file name");
+      }
       FileInputFormat.addInputPath(job, new Path(args[0]));
       FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		
