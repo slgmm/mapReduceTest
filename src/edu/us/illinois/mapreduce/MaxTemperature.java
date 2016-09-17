@@ -15,46 +15,50 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class MaxTemperature {
-   public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable>
+   public static class MaxTemperatureMapper extends Mapper<Object, Text, Text, IntWritable>
    {
-      private final static IntWritable one = new IntWritable(1);
-      private Text word = new Text();
+      private final static IntWritable temperature = new IntWritable();
+      private Text year = new Text();
       
       public void map(Object key, Text value, Context context) throws IOException, InterruptedException 
       {
          StringTokenizer itr = new StringTokenizer(value.toString());
+         year.set(value.toString().substring(15, 19));
+         temperature.set(Integer.parseInt(value.toString().substring(87, 92)));
          while (itr.hasMoreTokens()) 
          {
-            word.set(itr.nextToken());
-            context.write(word, one);
+            itr.nextToken();
+            context.write(year, temperature);
          }
       }
    }
    
-   public static class IntSumReducer extends Reducer<Text,IntWritable,Text,IntWritable> 
+   public static class MaxTemperatureReduce extends Reducer<Text,IntWritable,Text,IntWritable> 
    {
       private IntWritable result = new IntWritable();
       public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException 
       {
-         int sum = 0;
+         int maxTemperature = -999999;
          for (IntWritable val : values) 
          {
-            sum += val.get();
+        	 if(val.get() != 9999 && val.get() > maxTemperature)
+            	maxTemperature = val.get();
          }
-         result.set(sum);
+         result.set(maxTemperature);
          context.write(key, result);
       }
    }
-   
+
+ 
    public static void main(String[] args) throws Exception 
    {
       Configuration conf = new Configuration();
       Job job = Job.getInstance(conf, "word count");
 		
       job.setJarByClass(MaxTemperature.class);
-      job.setMapperClass(TokenizerMapper.class);
-      job.setCombinerClass(IntSumReducer.class);
-      job.setReducerClass(IntSumReducer.class);
+      job.setMapperClass(MaxTemperatureMapper.class);
+      job.setCombinerClass(MaxTemperatureReduce.class);
+      job.setReducerClass(MaxTemperatureReduce.class);
 		
       job.setOutputKeyClass(Text.class);
       job.setOutputValueClass(IntWritable.class);
